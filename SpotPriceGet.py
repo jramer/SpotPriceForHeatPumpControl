@@ -38,7 +38,7 @@ import sys, requests, json, configparser, datetime
 # Get current time and start a log line
 currentTime = datetime.datetime.now()
 logLine = []
-logLine.append(str (currentTime) + ' SPG: ')
+logLine.append(str(currentTime) + ' SPG: ')
 
 #A method for writing the log file
 def WriteLog(logLine, logFile = 'log.txt',logState = 'on'):
@@ -67,14 +67,16 @@ try:
     heatAnywayPrice = config['Settings']['HeatAnywayPrice']
 
 except:
-    logLine.append ('Error in reading configuration file. ')
+    print(str(currentTime) + 'Error in reading configuration file. ')
+    logLine.append('Error in reading configuration file. ')
     WriteLog(logLine)
 
 # Get prices from URL and parse json, then save prices to list
 try:
     pricePage = requests.get(priceURL)
 except:
-    logLine.append ('Error in fetching data from server. ')
+    print(str(currentTime) + 'Error in fetching data from server. ')
+    logLine.append('Error in fetching data from server. ')
     WriteLog(logLine,logFile, logState )
 
 
@@ -92,7 +94,8 @@ try:
         priceListYesterday.append(parsedPrices['data']['Rows'][i]['Columns'][1]['Value'])
         hours.append(i)
 except:
-    logLine.append ('Error in parsing the data. ')
+    print(str(currentTime) + 'Error in parsing the data. ')
+    logLine.append('Error in parsing the data. ')
     WriteLog(logLine,logFile, logState )
 
 
@@ -105,7 +108,7 @@ elif userTimeZone == '2':
     priceList.extend(priceListToday[:-1])
 
 else:
-    logLine.append ('Unsupported timezone! ')
+    logLine.append('Unsupported timezone! ')
 
 # Generate output, depending on settings,
 # option 'p' = write prices to file
@@ -125,7 +128,8 @@ elif outputType == 'l':
         for i in range(1,25):
             levels.append(config['Settings']['Level' + str(i)])
     except:
-        logLine.append ('Error in reading level values. ')
+        print(str(currentTime) + 'Error in reading level values. ')
+        logLine.append('Error in reading level values. ')
         WriteLog(logLine,logFile, logState )
 
 
@@ -147,7 +151,7 @@ elif outputType == 'l':
         outputStr.append(str(hours[i]) + ':' + outputTmp[i] + '\n' )
 
 else:
-    logLine.append ('NO correct output filetype! ')
+    logLine.append('NO correct output filetype! ')
 
 try:
     #Write the output to file, first make it a string
@@ -155,7 +159,8 @@ try:
     with open(outputFile, "w") as fo:
         fo.write(outputStr)
 except:
-    logLine.append ('Error in writing output file. ')
+    print(str(currentTime) + 'Error in writing output file. ')
+    logLine.append('Error in writing output file. ')
     WriteLog(logLine,logFile, logState )
 
 

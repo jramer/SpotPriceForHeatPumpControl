@@ -34,7 +34,7 @@ import sys, configparser, datetime, serial, os
 # Get current time and start a log line
 currentTime = datetime.datetime.now()
 logLine = []
-logLine.append(str (currentTime) + ' HPC: ')
+logLine.append(str(currentTime) + ' HPC: ')
 currentHour = datetime.datetime.now().hour
 
 
@@ -74,7 +74,7 @@ try:
     cmdPoolHeat = sendCmdToPump + ' ' + poolReg + ' ' + poolTemp
     cmdPoolWait = sendCmdToPump + ' ' + poolReg + ' ' + waitPoolTemp
 except:
-    print('Error in reading configuration file. ')
+    print(str(currentTime) + 'Error in reading configuration file. ')
     logLine.append('Error in reading configuration file. ')
     WriteLog(logLine)
 
@@ -88,7 +88,7 @@ try:
            isLowPriceArr[int(key)] = val
 
 except:
-    print('Error in reading input file. ')
+    print(str(currentTime) + 'Error in reading input file. ')
     logLine.append('Error in reading input file. ')
     WriteLog(logLine)
 
@@ -104,7 +104,7 @@ try:
         os.system(cmdPoolWait)
         logLine.append(' waiting')
 except:
-    print('Error when running heatpump command. ')
+    print(str(currentTime) + 'Error when running heatpump command. ')
     logLine.append('Error when running heatpump command. ')
     WriteLog(logLine)
 
