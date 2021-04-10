@@ -2,24 +2,24 @@
 """
 Created on Tue Feb  3 22:40:22 2015
 
-SpotPriceGet  0.3
+SpotPriceGet  0.4
 
 This is a python3 program that will fetch electricity spot prices from Nordpool
 and save the data to a file. It is intended to be used in conjunction with
 another program(s) for controlling electricity usage. It is associated with a
 configuration file from which the settings are read. User is advised to observe
-the terms and conditions of Nordpool, their website and data. 
+the terms and conditions of Nordpool, their website and data.
 
 
-Author: 
+Author:
 Arttu Huttunen
 Oulu, Finland
-Created in 2015
+Created in 2015, changed 2021 by Joakim Ramer
 
 /*
  * ----------------------------------------------------------------------------
  * The MIT License (MIT)
- * Copyright (c) 2015 Arttu Huttunen 
+ * Copyright (c) 2015 Arttu Huttunen
  * Anyone is free to do whatever they want with this code, at their own risk.
  * ----------------------------------------------------------------------------
  */
@@ -41,7 +41,7 @@ logLine = []
 logLine.append(str (currentTime) + ' SPG: ')
 
 #A method for writing the log file
-def WriteLog(logLine, logFile = 'log.txt',logState = 'on'):       
+def WriteLog(logLine, logFile = 'log.txt',logState = 'on'):
     logLine.append('\n')
     logLine = ''.join(logLine)
     #print (logLine)
@@ -55,21 +55,21 @@ try:
     # Read settings from a file
     config = configparser.ConfigParser()
     config.read(configFile)
-    
-    # Get settings *********************************** hardcoded stuff 
-    priceURL = config['Settings']['URL'] 
+
+    # Get settings *********************************** hardcoded stuff
+    priceURL = config['Settings']['URL']
     outputFile = config['Settings']['OutputFile']
     outputType = config['Settings']['OutputType']
     logState = config['Settings']['Log']
     logFile = config['Settings']['LogFile']
     logPrice = config['Settings']['LogPrice']
     userTimeZone = config['Settings']['TimeZone']
-    
-    
+    heatAnywayPrice = config['Settings']['HeatAnywayPrice']
+
 except:
     logLine.append ('Error in reading configuration file. ')
     WriteLog(logLine)
-   
+
 # Get prices from URL and parse json, then save prices to list
 try:
     pricePage = requests.get(priceURL)
@@ -80,12 +80,12 @@ except:
 
 try:
     parsedPrices = json.loads(pricePage.text)
-    
+
     priceList =[]
     hours =[]
     priceListToday = []
     priceListYesterday = []
-    
+
     for i in range(0,24):
         #****************************** more hardcoded stuff
         priceListToday.append(parsedPrices['data']['Rows'][i]['Columns'][0]['Value'])
@@ -99,11 +99,11 @@ except:
 #Time zone correction
 if userTimeZone == '1':
     priceList.extend(priceListToday)
-    
+
 elif userTimeZone == '2':
     priceList.extend(priceListYesterday[-1:])
     priceList.extend(priceListToday[:-1])
-    
+
 else:
     logLine.append ('Unsupported timezone! ')
 
@@ -120,24 +120,27 @@ if outputType == 'p':
 # sort prices to levels
 elif outputType == 'l':
     #get level values from the config file
-    try:    
+    try:
         levels = []
         for i in range(1,25):
-            levels.append(config['Settings']['Level' + str(i)])    
+            levels.append(config['Settings']['Level' + str(i)])
     except:
         logLine.append ('Error in reading level values. ')
         WriteLog(logLine,logFile, logState )
 
-    
-    
+
+
     priceFloat = []
     for i in priceList:
         priceFloat.append(float(i.replace(',','.')))
-    
+
     outputTmp = [None]*24
     for i in levels:
         priceMaxIndex = priceFloat.index(max(priceFloat))
-        outputTmp[priceMaxIndex] = i
+        if (max(priceFloat) <= float(heatAnywayPrice)):
+            outputTmp[priceMaxIndex] = levels[23]
+        else:
+            outputTmp[priceMaxIndex] = i
         priceFloat[priceMaxIndex] = 0
 
     for i in range(0,24):
@@ -156,13 +159,13 @@ except:
     WriteLog(logLine,logFile, logState )
 
 
-#append log with the type of output and optionally with prices 
+#append log with the type of output and optionally with prices
 logLine.append( "'" + outputType  + "' OK. ")
-if logPrice == 'on':     
+if logPrice == 'on':
     logLine.append( ' '.join(priceList))
 
 
-# Finish by writing the a line to the log file if log in 'on' 
+# Finish by writing the a line to the log file if log in 'on'
 WriteLog(logLine,logFile, logState )
 
-# END OF PROGRAM   
+# END OF PROGRAM

@@ -14,7 +14,6 @@ OutputFile = hours.txt
 # Output file type, options: p = prices, l = levels
 OutputType = l
 
-
 # Level1 is the highest price. With OutputType=l this sets when to heat or when to wait with heating.
 Level1 = Wait
 Level2 = Wait
@@ -41,7 +40,6 @@ Level22 = Heat
 Level23 = Heat
 Level24 = Heat
 
-
 #Logging on/off
 Log = on
 
@@ -53,7 +51,6 @@ LogPrice = off
 
 #User time zone, UTC+x, Finland is 2, Sweden 1, Data is assumed to be in CET i.e. 1
 TimeZone = 1
-
 
 #Serial port configuration for writing the control commands
 SerialPort = /dev/ttyUSB0
@@ -79,3 +76,6 @@ WaitPoolTemp = 10
 RoomReg = 50
 # Set pool temp register
 PoolReg = 64
+
+# At prices lower than this is still ok to heat in € cents
+HeatAnywayPrice = 32

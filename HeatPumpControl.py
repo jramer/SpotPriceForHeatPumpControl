@@ -5,9 +5,9 @@ Created on Sun Feb  8 23:38:32 2015
 HeatPumpControl 0.4
 
 This is a python3 program that will read a list of commands from a file and
-will then control a heatpump according to the data. 
+will then control a Thermia heatpump, with a thermiq controller card, according to the data.
 
-Author: 
+Author:
 Arttu Huttunen
 Oulu, Finland
 Created in 2015, changed 2021 by Joakim Ramer
@@ -15,7 +15,7 @@ Created in 2015, changed 2021 by Joakim Ramer
 /*
  * ----------------------------------------------------------------------------
  * The MIT License (MIT)
- * Copyright (c) 2015 Arttu Huttunen 
+ * Copyright (c) 2015 Arttu Huttunen
  * Anyone is free to do whatever they want with this code, at their own risk.
  * ----------------------------------------------------------------------------
  */
@@ -39,7 +39,7 @@ currentHour = datetime.datetime.now().hour
 
 
 #A method for writing the log file, default to log.txt
-def WriteLog(logLine, logFile = 'log.txt',logState = 'on'):       
+def WriteLog(logLine, logFile = 'log.txt',logState = 'on'):
     logLine.append('\n')
     logLine = ''.join(logLine)
     if logState == 'on':
@@ -52,8 +52,8 @@ try:
     # Read settings from a file
     config = configparser.ConfigParser()
     config.read(configFile)
-    
-    # Get settings *********************************** hardcoded stuff  
+
+    # Get settings *********************************** hardcoded stuff
     inputFile = config['Settings']['OutputFile']
     logState = config['Settings']['Log']
     logFile = config['Settings']['LogFile']
@@ -78,7 +78,7 @@ except:
     WriteLog(logLine)
 
 
-try:    
+try:
     isLowPriceArr = {}
     with open(inputFile) as f:
         for line in f:
@@ -105,8 +105,8 @@ except:
     logLine.append ('Error in writing to serial port. ')
     WriteLog(logLine)
 
-# Finish by writing the a line to the log file if log in 'on' 
+# Finish by writing the a line to the log file if log in 'on'
 logLine.append(' OK.')
 WriteLog(logLine,logFile, logState )
 
-# END OF PROGRAM  
+# END OF PROGRAM
