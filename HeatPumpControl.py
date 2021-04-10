@@ -2,7 +2,7 @@
 """
 Created on Sun Feb  8 23:38:32 2015
 
-HeatPumpControl 0.3
+HeatPumpControl 0.4
 
 This is a python3 program that will read a list of commands from a file and
 will then control a heatpump according to the data. 
@@ -10,7 +10,7 @@ will then control a heatpump according to the data.
 Author: 
 Arttu Huttunen
 Oulu, Finland
-Created in 2015
+Created in 2015, changed 2021 by Joakim Ramer
 
 /*
  * ----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ configFile = './Settings.txt'
 
 #Actual code starts here
 #---------------------------------------------------------------------------
-import sys, configparser, datetime, serial
+import sys, configparser, datetime, serial, os
 
 # Get current time and start a log line
 currentTime = datetime.datetime.now()
@@ -60,42 +60,53 @@ try:
     serialPort = config['Settings']['SerialPort']
     serialBaudrate = config['Settings']['Baudrate']
     serialTimeout = config['Settings']['Timeout']
+    roomTemp = config['Settings']['RoomTemp']
+    minRoomTemp = config['Settings']['MinRoomTemp']
+    poolTemp = config['Settings']['PoolTemp']
+    waitPoolTemp = config['Settings']['WaitPoolTemp']
+    roomReg = config['Settings']['RoomReg']
+    poolReg = config['Settings']['PoolReg']
+    sendCmdToPump = config['Settings']['SendCmdToPump']
 
+    # Set up commands
+    cmdRoomHeat = sendCmdToPump + ' ' + roomReg + ' ' + roomTemp
+    cmdRoomWait = sendCmdToPump + ' ' + roomReg + ' ' + minRoomTemp
+    cmdPoolHeat = sendCmdToPump + ' ' + poolReg + ' ' + poolTemp
+    cmdPoolWait = sendCmdToPump + ' ' + poolReg + ' ' + waitPoolTemp
 except:
     logLine.append ('Error in reading configuration file. ')
     WriteLog(logLine)
 
 
 try:    
-    commands = {}
+    isLowPriceArr = {}
     with open(inputFile) as f:
         for line in f:
            (key, val) = line.split(':')
            val = val.rstrip('\n')
-           commands[int(key)] = val
+           isLowPriceArr[int(key)] = val
 
 except:
     logLine.append ('Error in reading input file. ')
     WriteLog(logLine)
 
-#atwxxhhll               Write hhll to register xx
-command = commands[currentHour]
-
+heatOrWait = isLowPriceArr[currentHour]
+logLine.append(str(currentHour) + ':')
 try:
-    ser = serial.Serial(
-        port = serialPort,
-        baudrate = int(serialBaudrate),
-        timeout = int(serialTimeout)
-    )
-    ser.write(command,'utf-8')
-    ser.close()
-
+    if heatOrWait == 'Heat':
+        os.system(cmdRoomHeat)
+        os.system(cmdPoolHeat)
+        logLine.append(' heating')
+    else:
+        os.system(cmdRoomWait)
+        os.system(cmdPoolWait)
+        logLine.append(' waiting')
 except:
     logLine.append ('Error in writing to serial port. ')
     WriteLog(logLine)
 
 # Finish by writing the a line to the log file if log in 'on' 
-logLine.append('OK.')
+logLine.append(' OK.')
 WriteLog(logLine,logFile, logState )
 
 # END OF PROGRAM  

@@ -6,39 +6,40 @@
 
 # www address for getting the data
 URL = http://www.nordpoolspot.com/api/marketdata/page/35?currency=,,EUR,EUR
+#&endDate=10-04-2021
 
 # Name and path of the output file
 OutputFile = hours.txt
 
 # Output file type, options: p = prices, l = levels
-OutputType = p
+OutputType = l
 
 
-#Level values/commands, 'atw' +register + value (the command being sent), level1 for the highest price
-Level1 = True
-Level2 = True
-Level3 = True
-Level4 = True
-Level5 = True
-Level6 = False
-Level7 = False
-Level8 = False
-Level9 = False
-Level10 = False
-Level11 = False
-Level12 = False
-Level13 = False
-Level14 = False
-Level15 = False
-Level16 = False
-Level17 = False
-Level18 = False
-Level19 = False
-Level20 = False
-Level21 = False
-Level22 = False
-Level23 = False
-Level24 = False
+# Level1 is the highest price. With OutputType=l this sets when to heat or when to wait with heating.
+Level1 = Wait
+Level2 = Wait
+Level3 = Wait
+Level4 = Wait
+Level5 = Wait
+Level6 = Wait
+Level7 = Wait
+Level8 = Heat
+Level9 = Heat
+Level10 = Heat
+Level11 = Heat
+Level12 = Heat
+Level13 = Heat
+Level14 = Heat
+Level15 = Heat
+Level16 = Heat
+Level17 = Heat
+Level18 = Heat
+Level19 = Heat
+Level20 = Heat
+Level21 = Heat
+Level22 = Heat
+Level23 = Heat
+Level24 = Heat
 
 
 #Logging on/off
@@ -55,9 +56,26 @@ TimeZone = 1
 
 
 #Serial port configuration for writing the control commands
-SerialPort = /dev/ttyS1
+SerialPort = /dev/ttyUSB0
 Baudrate = 9600
 Timeout = 5
 
 GPIOpin = 7
 
+# Thermiq data writer
+SendCmdToPump = /usr/sbin/hp_data.com -p/dev/ttyUSB0 -w
+
+# Wanted room temp
+RoomTemp = 21
+# Minimum room temp (Wait with heating)
+MinRoomTemp = 19
+
+# Wanted pool temp
+PoolTemp = 29
+# Wait with heating the pool temp
+WaitPoolTemp = 10
+
+# Set room temp register
+RoomReg = 50
+# Set pool temp register
+PoolReg = 64
