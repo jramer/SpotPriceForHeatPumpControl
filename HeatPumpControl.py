@@ -74,7 +74,8 @@ try:
     cmdPoolHeat = sendCmdToPump + ' ' + poolReg + ' ' + poolTemp
     cmdPoolWait = sendCmdToPump + ' ' + poolReg + ' ' + waitPoolTemp
 except:
-    logLine.append ('Error in reading configuration file. ')
+    print('Error in reading configuration file. ')
+    logLine.append('Error in reading configuration file. ')
     WriteLog(logLine)
 
 
@@ -87,7 +88,8 @@ try:
            isLowPriceArr[int(key)] = val
 
 except:
-    logLine.append ('Error in reading input file. ')
+    print('Error in reading input file. ')
+    logLine.append('Error in reading input file. ')
     WriteLog(logLine)
 
 heatOrWait = isLowPriceArr[currentHour]
@@ -102,7 +104,8 @@ try:
         os.system(cmdPoolWait)
         logLine.append(' waiting')
 except:
-    logLine.append ('Error in writing to serial port. ')
+    print('Error when running heatpump command. ')
+    logLine.append('Error when running heatpump command. ')
     WriteLog(logLine)
 
 # Finish by writing the a line to the log file if log in 'on'
