@@ -29,7 +29,7 @@ configFile = './Settings.txt'
 
 #Actual code starts here
 #---------------------------------------------------------------------------
-import sys, configparser, datetime, serial, os
+import sys, configparser, datetime, serial, os, requests
 
 # Get current time and start a log line
 currentTime = datetime.datetime.now()
@@ -67,12 +67,14 @@ try:
     roomReg = config['Settings']['RoomReg']
     poolReg = config['Settings']['PoolReg']
     sendCmdToPump = config['Settings']['SendCmdToPump']
+    homeyURL = config['Settings']['HomeyURL']
 
     # Set up commands
     cmdRoomHeat = sendCmdToPump + ' ' + roomReg + ' ' + roomTemp
     cmdRoomWait = sendCmdToPump + ' ' + roomReg + ' ' + minRoomTemp
     cmdPoolHeat = sendCmdToPump + ' ' + poolReg + ' ' + poolTemp
     cmdPoolWait = sendCmdToPump + ' ' + poolReg + ' ' + waitPoolTemp
+
 except:
     print(str(currentTime) + 'Error in reading configuration file. ')
     logLine.append('Error in reading configuration file. ')
@@ -98,10 +100,12 @@ try:
     if heatOrWait == 'Heat':
         os.system(cmdRoomHeat)
         os.system(cmdPoolHeat)
+        requests.get(homeyURL + roomTemp) #Send set room temp to homey virtual device
         logLine.append(' heating')
     else:
         os.system(cmdRoomWait)
         os.system(cmdPoolWait)
+        requests.get(homeyURL + minRoomTemp) #Send set room temp to homey virtual device
         logLine.append(' waiting')
 except:
     print(str(currentTime) + 'Error when running heatpump command. ')

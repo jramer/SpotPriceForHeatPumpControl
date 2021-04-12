@@ -79,3 +79,6 @@ PoolReg = 64
 
 # At prices lower than this is still ok to heat in € cents
 HeatAnywayPrice = 32
+
+# Extra send temp to homey virtual device
+HomeyURL = https://XXXXXXXXXXX.connect.athom.com/api/app/com.internet/housesettemp/
